@@ -19,6 +19,15 @@ cask "ephe" do
 
   app "Ephe.app"
 
+  # The DMG is not notarized, so Gatekeeper would block the first launch of a copy that
+  # carries the quarantine attribute Homebrew sets on downloads. Removing it here is the
+  # install step's job: the hash above is what ties this install to the published DMG.
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Ephe.app"],
+                   sudo: false
+  end
+
   zap trash: [
     "~/.ephe",
     "~/Library/Application Support/com.ephe.ephe",
